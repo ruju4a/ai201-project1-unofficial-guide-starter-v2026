@@ -23,8 +23,8 @@ For at least 4 of my 5 test questions, the retrieved chunks include one that
 contains the answer.
 
 **Why this target:**
-<!-- e.g. "One of my questions is about a topic only two documents mention, so
-     I expect that one to be hard." -->
+
+My five test questions retrieved chunks with best distances between 0.253 and 0.593, and for each one the top chunk was a document that directly answers it (e.g. `admin_housing_lottery.txt` for the lottery question, `money_textbooks.txt` for textbook costs). I'm setting the target at 4 of 5 rather than 5 of 5 because "food options" sits noticeably closer to the cutoff (0.593) than the other four — a post I haven't tested yet could plausibly land past the gate without actually answering the question, and I'd rather budget for one miss than claim a target I can't back with margin.
 
 ---
 
@@ -33,8 +33,8 @@ contains the answer.
 Every answer the system produces names at least one source document.
 
 **Why this target:**
-<!-- Why all five and not four? What about your setup makes that achievable —
-     or what would have to go wrong for it not to be? -->
+
+This is 5 of 5, not 4 of 5, because naming a source isn't something retrieval can get partially right — it's a formatting rule in the system prompt (`GROUNDING_INSTRUCTION` in `generate.py`) that applies to every answer regardless of whether the retrieved chunks were any good. Even my refused near-miss answer (Sample Answer in the README) named the documents it retrieved. The only way this breaks is the model ignoring its own system instructions, which I haven't seen happen across any question I've run.
 
 ---
 
@@ -50,8 +50,8 @@ in at least 4 of 5 tries.
      just keep five of them, or the "4 of 5" above has nothing to be 4 of. -->
 
 **Why this target:**
-<!-- What did your distances look like when you set the cutoff in Milestone 4?
-     Was there a clean gap, or did the two groups overlap? -->
+
+My five real questions topped out at 0.593, and the five `OUT_OF_SCOPE` questions came back between 0.825 and 0.934 — a clean gap of over 0.2, no overlap between the groups. I set my cutoff at 0.7, comfortably inside that gap. I'm still targeting 4 of 5 rather than 5 of 5 because this gap is measured on only five out-of-scope questions; a future question that happens to share vocabulary with my corpus (mentioning "students" or "courses" without actually being about campus life, the way my own broken test questions did before I fixed them) could land closer to the middle than any of these five did.
 
 ---
 
@@ -68,10 +68,12 @@ in at least 4 of 5 tries.
           sentence cut in half at either end."
        - "No chunk is shorter than 200 characters, since anything below that
           in my corpus turned out to be a heading with no content under it." -->
-
+For at least 4 of 5 sampled chunks, the chunk reads as a complete thought — no sentence is cut off at either end, and every sentence in it is about the same topic.
 
 
 **Why this target:**
+
+I read the 5 chunks `python app.py chunks` printed after switching to paragraph-grouped chunking, and all 5 came back as complete thoughts — no cut sentences, one topic each (e.g. `admin_add_drop_deadline.txt` stayed one self-contained explanation of the deadline). I'm setting the target at 4 of 5 rather than 5 of 5 because that's a sample of 5 out of 88 chunks, and I haven't ruled out a document elsewhere in the corpus that mixes two topics in one paragraph, which my paragraph-boundary splitter wouldn't catch.
 
 
 
@@ -87,9 +89,12 @@ in at least 4 of 5 tries.
      present — anything, as long as it names a number or an observable
      outcome. -->
 
+For at least 4 of my 5 test questions, the source the answer names is a document that actually contains the answer — not just any source.
 
 
 **Why this target:**
+
+Criterion 2 only checks that an answer names *a* source, and that's easy to satisfy without the source actually being right. My corpus has several near-duplicate documents that make a wrong-but-plausible citation realistic rather than hypothetical — `admin_add_drop_deadline.txt` and `admin_withdrawal_deadline.txt` cover two different but similarly-worded deadlines, and each course has separate `_exams`/`_workload` files alongside its main file. I set the target at 4 of 5, matching criterion 1, since correct citation depends on the same retrieval step succeeding.
 
 
 
